@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "fastapi-celery-project"
+version = "0.1.0"
+description = ""
+authors = ["Anton Shefer <rezajkee@mail.ru>"]
+readme = "README.md"
+packages = [{include = "fastapi_celery_project"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+fastapi = "^0.89.1"
+uvicorn = {extras = ["standart"], version = "^0.20.0"}
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^22.12.0"
+isort = "^5.11.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.black]
+line-length = 80
+extend-exclude = '''
+/(
+  | migrations
+)/
+'''
