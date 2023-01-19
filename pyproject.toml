@@ -16,6 +16,7 @@ flower = "^1.2.0"
 SQLAlchemy = "^1.4.46"
 alembic = "^1.9.2"
 psycopg2-binary = "^2.9.5"
+watchfiles = "^0.18.1"
 
 
 [tool.poetry.group.dev.dependencies]
