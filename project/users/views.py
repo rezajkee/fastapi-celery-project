@@ -3,14 +3,13 @@ import random
 
 import requests
 from celery.result import AsyncResult
-from fastapi import FastAPI, Request, Body
+from fastapi import Body, FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 
 from . import users_router
 from .schemas import UserBody
-from .tasks import sample_task
-
+from .tasks import sample_task, task_process_notification
 
 logger = logging.getLogger(__name__)
 templates = Jinja2Templates(directory="project/users/templates")
@@ -47,8 +46,23 @@ def task_status(task_id: str):
             "error": error,
         }
     else:
-        response = {
-            "state": state
-        }
+        response = {"state": state}
     return JSONResponse(response)
 
+
+@users_router.post("/webhook_test/")
+def webhook_test():
+    if not random.choice([0, 1]):
+        # mimic an error
+        raise Exception()
+
+    # blocking process
+    requests.post("https://httpbin.org/delay/5")
+    return "pong"
+
+
+@users_router.post("/webhook_test_async/")
+def webhook_test_async():
+    task = task_process_notification.delay()
+    print(task.id)
+    return "pong"
