@@ -19,6 +19,7 @@ def api_call(email: str):
     # used for testing a failed api call
     if random.choice([0, 1]):
         raise Exception("random processing error")
+
     # used for simulating a call to a third-party api
     requests.post("https://httpbin.org/delay/5")
 
@@ -39,14 +40,16 @@ def task_status(task_id: str):
     task = AsyncResult(task_id)
     state = task.state
 
-    if state == "FAILURE":
+    if state == 'FAILURE':
         error = str(task.result)
         response = {
-            "state": state,
-            "error": error,
+            'state': state,
+            'error': error,
         }
     else:
-        response = {"state": state}
+        response = {
+            'state': state,
+        }
     return JSONResponse(response)
 
 
@@ -66,3 +69,8 @@ def webhook_test_async():
     task = task_process_notification.delay()
     print(task.id)
     return "pong"
+
+
+@users_router.get("/form_ws/")
+def form_ws_example(request: Request):
+    return templates.TemplateResponse("form_ws.html", {"request": request})
