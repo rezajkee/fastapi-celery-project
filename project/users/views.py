@@ -40,15 +40,15 @@ def task_status(task_id: str):
     task = AsyncResult(task_id)
     state = task.state
 
-    if state == 'FAILURE':
+    if state == "FAILURE":
         error = str(task.result)
         response = {
-            'state': state,
-            'error': error,
+            "state": state,
+            "error": error,
         }
     else:
         response = {
-            'state': state,
+            "state": state,
         }
     return JSONResponse(response)
 
@@ -74,3 +74,10 @@ def webhook_test_async():
 @users_router.get("/form_ws/")
 def form_ws_example(request: Request):
     return templates.TemplateResponse("form_ws.html", {"request": request})
+
+
+@users_router.get("/form_socketio/")
+def form_socketio_example(request: Request):
+    return templates.TemplateResponse(
+        "form_socketio.html", {"request": request}
+    )
