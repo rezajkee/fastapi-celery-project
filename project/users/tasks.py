@@ -1,10 +1,13 @@
 import random
 
+import celery
 import requests
 from asgiref.sync import async_to_sync
 from celery import shared_task
 from celery.signals import task_postrun
 from celery.utils.log import get_task_logger
+
+from project.database import db_context
 
 logger = get_task_logger(__name__)
 
@@ -24,18 +27,15 @@ def sample_task(email):
     api_call(email)
 
 
-@shared_task(bind=True)
-def task_process_notification(self):
-    try:
-        if not random.choice([0, 1]):
-            # mimic random error
-            raise Exception()
+class BaseTaskWithRetry(celery.Task):
+    autoretry_for = (Exception, KeyError)
+    retry_kwargs = {"max_retries": 5}
+    retry_backoff = True
 
-        # this would block the I/O
-        requests.post("https://httpbin.org/delay/5")
-    except Exception as e:
-        logger.error("exception raised, it would be retry after 5 seconds")
-        raise self.retry(exc=e, countdown=5)
+
+@shared_task(bind=True, base=BaseTaskWithRetry)
+def task_process_notification(self):
+    raise Exception()
 
 
 @task_postrun.connect
@@ -67,3 +67,12 @@ def dynamic_example_two():
 @shared_task(name="high_priority:dynamic_example_three")
 def dynamic_example_three():
     logger.info("Example Three")
+
+
+@shared_task()
+def task_send_welcome_email(user_pk):
+    from project.users.models import User
+
+    with db_context() as session:
+        user = session.query(User).get(user_pk)
+        logger.info(f"send email to {user.email} {user.id}")
