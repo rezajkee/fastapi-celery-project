@@ -24,6 +24,11 @@ asyncio-redis = "^0.16.0"
 broadcaster = "^0.2.0"
 aioredis = "^2.0.1"
 python-socketio = "^5.7.2"
+pytest = "^7.2.1"
+httpx = "^0.23.3"
+factory-boy = "^3.2.1"
+pytest-factoryboy = "^2.5.1"
+pytest-cov = "^4.0.0"
 
 
 [tool.poetry.group.dev.dependencies]
