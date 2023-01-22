@@ -29,6 +29,8 @@ httpx = "^0.23.3"
 factory-boy = "^3.2.1"
 pytest-factoryboy = "^2.5.1"
 pytest-cov = "^4.0.0"
+Pillow = "^9.4.0"
+python-multipart = "^0.0.5"
 
 
 [tool.poetry.group.dev.dependencies]
