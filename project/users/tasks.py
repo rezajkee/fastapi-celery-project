@@ -8,6 +8,7 @@ from celery import shared_task
 from celery.signals import after_setup_logger, task_postrun
 from celery.utils.log import get_task_logger
 
+from project.celery_utils import custom_celery_task
 from project.database import db_context
 
 logger = get_task_logger(__name__)
@@ -34,9 +35,13 @@ class BaseTaskWithRetry(celery.Task):
     retry_backoff = True
 
 
-@shared_task(bind=True, base=BaseTaskWithRetry)
-def task_process_notification(self):
-    raise Exception()
+@custom_celery_task(max_retries=3)
+def task_process_notification():
+    if not random.choice([0, 1]):
+        # mimic random error
+        raise Exception()
+
+    requests.post("https://httpbin.org/delay/5")
 
 
 @task_postrun.connect
